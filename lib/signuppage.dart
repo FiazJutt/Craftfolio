@@ -245,31 +245,14 @@ class _SignupPageState extends State<SignupPage> {
   Widget _buildLogo() {
     return Hero(
       tag: 'app_logo',
-      child: Container(
-        width: 140,
-        height: 140,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [
-              Colors.white,
-              Colors.white.withOpacity(0.95),
-            ],
-          ),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.4),
-            width: 2,
-          ),
-        ),
         child: Container(
           padding: const EdgeInsets.all(8),
           child: CircleAvatar(
             radius: 62,
             backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage("assets/logo.png"),
+            backgroundImage: AssetImage("assets/CF_Logo.png"),
           ),
         ),
-      ),
     );
   }
 
