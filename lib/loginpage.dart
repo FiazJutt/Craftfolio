@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'signuppage.dart';
+import 'services/auth_service.dart';
+import 'homepage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,6 +12,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
+  bool _isLoading = false;
+  final AuthService _authService = AuthService();
 
   // Form field controllers
   final _emailController = TextEditingController();
@@ -120,8 +124,15 @@ class _LoginPageState extends State<LoginPage> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: (){
-                  //TODO: Implement the Forgot password here
+                onPressed: () {
+                  if (_emailController.text.isNotEmpty) {
+                    _handleForgotPassword();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Please enter your email address')),
+                    );
+                  }
                 },
                 style: TextButton.styleFrom(foregroundColor: Colors.white),
                 child: const Text(
@@ -132,9 +143,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: (){
-                // TODO: Implement login logic
-              },
+              onPressed: _handleLogin,
               style: ElevatedButton.styleFrom(
                 foregroundColor: const Color(0xFF1A237E),
                 backgroundColor: Colors.white,
@@ -145,18 +154,18 @@ class _LoginPageState extends State<LoginPage> {
                 elevation: 8,
                 shadowColor: Colors.black26,
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Sign In",
-                    style: TextStyle(
+                    _isLoading ? "Loading..." : "Sign In",
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(width: 8),
-                  Icon(Icons.arrow_forward, size: 18),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward, size: 18),
                 ],
               ),
             ),
@@ -263,6 +272,70 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future<void> _handleLogin() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _authService.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      // Navigate to home page after successful login
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const Homepage()),
+          (route) => false,
+        );
+      }
+    } on Exception catch (e) {
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _handleForgotPassword() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _authService.resetPassword(_emailController.text.trim());
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text('Password reset email sent. Please check your inbox.')),
+        );
+      }
+    } on Exception catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 }
 
 class _CustomTextField extends StatelessWidget {

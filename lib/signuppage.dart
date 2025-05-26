@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'loginpage.dart';
+import 'services/auth_service.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -11,6 +12,8 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _isLoading = false;
+  final AuthService _authService = AuthService();
 
   // Form field controllers
   final _nameController = TextEditingController();
@@ -136,7 +139,9 @@ class _SignupPageState extends State<SignupPage> {
               obscureText: _obscureConfirmPassword,
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                  _obscureConfirmPassword
+                      ? Icons.visibility_off
+                      : Icons.visibility,
                   color: Colors.white70,
                 ),
                 onPressed: () {
@@ -148,9 +153,7 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: (){
-                // TODO: Implement login logic
-              },
+              onPressed: _handleSignUp,
               style: ElevatedButton.styleFrom(
                 foregroundColor: const Color(0xFF1A237E),
                 backgroundColor: Colors.white,
@@ -161,11 +164,11 @@ class _SignupPageState extends State<SignupPage> {
                 elevation: 8,
                 shadowColor: Colors.black26,
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Sign Up",
+                    _isLoading ? "Loading..." : "Sign Up",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -281,6 +284,45 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  Future<void> _handleSignUp() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _authService.signUpWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        name: _nameController.text.trim(),
+      );
+
+      // Navigate to login page after successful signup
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Account created successfully! Please login.')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      }
+    } on Exception catch (e) {
+      // Show error message
+      print('Error during signup: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 }
 
 class _CustomTextField extends StatelessWidget {
