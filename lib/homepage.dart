@@ -1,3 +1,4 @@
+import 'package:craftfolio/profilescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'services/auth_service.dart';
@@ -14,6 +15,17 @@ class _HomepageState extends State<Homepage> {
   final AuthService _authService = AuthService();
   User? _currentUser;
   bool _isLoading = false;
+  int _selectedIndex = 0;
+
+  // Placeholder pages for the other two tabs
+  static const List<Widget> _widgetOptions = <Widget>[
+    // Current homepage content (will be extracted or replaced)
+    Text('Home Page Content'),
+    Text('Search Page Content'),
+    ProfilePage()
+
+    // Text('Profile Page Content'),
+  ];
 
   @override
   void initState() {
@@ -56,6 +68,12 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,58 +95,50 @@ class _HomepageState extends State<Homepage> {
           ),
         ],
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFF1A237E).withOpacity(0.9),
-              const Color(0xFF0D47A1),
-              const Color(0xFF1565C0).withOpacity(0.8),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                const Text(
-                  'My Portfolios',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+      body: _selectedIndex == 0
+          ? Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    const Color(0xFF1A237E).withOpacity(0.9),
+                    const Color(0xFF0D47A1),
+                    const Color(0xFF1565C0).withOpacity(0.8),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // TODO: Implement portfolio creation
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: const Color(0xFF1A237E),
-                    backgroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  icon: const Icon(Icons.add),
-                  label: const Text('Create Portfolio'),
-                ),
-              ],
+              ),
+
+            )
+          : Center(
+              child: _widgetOptions.elementAt(_selectedIndex),
             ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.description),
+            label: 'Templates',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+
+
+        backgroundColor: const Color(0xFF323A8F),
+        selectedItemColor: Colors.white, // Selected icon and label color
+        unselectedItemColor: Colors.white.withOpacity(0.7), // Unselected icon and label color
+
       ),
     );
   }
