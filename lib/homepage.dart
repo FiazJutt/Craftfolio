@@ -1,4 +1,6 @@
+import 'package:craftfolio/downloadpage.dart';
 import 'package:craftfolio/profilescreen.dart';
+import 'package:craftfolio/templatespage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'services/auth_service.dart';
@@ -20,11 +22,11 @@ class _HomepageState extends State<Homepage> {
   // Placeholder pages for the other two tabs
   static const List<Widget> _widgetOptions = <Widget>[
     // Current homepage content (will be extracted or replaced)
-    Text('Home Page Content'),
-    Text('Search Page Content'),
+    TemplatesPage(),
+    DownloadPage(),
+    // Text('Search Page Content'),
     ProfilePage()
 
-    // Text('Profile Page Content'),
   ];
 
   @override
@@ -95,8 +97,7 @@ class _HomepageState extends State<Homepage> {
           ),
         ],
       ),
-      body: _selectedIndex == 0
-          ? Container(
+      body: Container(
               width: double.infinity,
               height: double.infinity,
               decoration: BoxDecoration(
@@ -111,8 +112,6 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
 
-            )
-          : Center(
               child: _widgetOptions.elementAt(_selectedIndex),
             ),
       bottomNavigationBar: BottomNavigationBar(
