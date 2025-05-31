@@ -124,8 +124,8 @@ class _HomepageState extends State<Homepage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.description),
-            label: 'Templates',
+            icon: Icon(Icons.download),
+            label: 'Download',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

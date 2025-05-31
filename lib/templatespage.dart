@@ -24,22 +24,22 @@ class _TemplatesPageState extends State<TemplatesPage> {
     {
       'id': 3,
       'name': 'Minimalist',
-      'image': 'assets/templates/template3.png',
+      'image': 'assets/templates/template3.jpg',
     },
     {
       'id': 4,
       'name': 'Corporate',
-      'image': 'assets/templates/template4.jpg',
+      'image': 'assets/templates/template4.png',
     },
     {
       'id': 5,
       'name': 'Modern',
-      'image': 'assets/templates/template5.jpg',
+      'image': 'assets/templates/template5.png',
     },
     {
       'id': 6,
       'name': 'Elegant',
-      'image': 'assets/templates/template6.png',
+      'image': 'assets/templates/template6.jpg',
     },
   ];
 
@@ -66,9 +66,9 @@ class _TemplatesPageState extends State<TemplatesPage> {
             children: [
               // Welcome message
               Container(
-                height: 120,
+                height: 90,
                 width: double.infinity,
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.blueAccent,
                   borderRadius: BorderRadius.circular(12),
@@ -78,7 +78,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
                     Text(
                       'Hello, ${AuthService().userInfo?.displayName ?? 'User'}!',
                       style: const TextStyle(
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                       ),
@@ -87,7 +87,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
                     Text(
                       'Choose a template to get started with your resume',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 12,
                         color: Colors.white,
                       ),
                     ),
