@@ -1,5 +1,5 @@
 import 'package:craftfolio/downloadpage.dart';
-import 'package:craftfolio/profilescreen.dart';
+import 'package:craftfolio/UserInfoscreen.dart';
 import 'package:craftfolio/templatespage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
