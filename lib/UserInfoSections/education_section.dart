@@ -16,41 +16,75 @@ class EducationSection extends StatefulWidget {
 }
 
 class _EducationSectionState extends State<EducationSection> {
-  // Education - multiple entries
-  List<Map<String, dynamic>> _educationEntries = [];
-  final _educationTitleController = TextEditingController(); // Degree/Certificate
-  final _educationInstitutionController = TextEditingController(); // Institution
-  final _educationPeriodController = TextEditingController();
-  final _educationDescriptionController = TextEditingController();
+  List<Map<String, dynamic>> _educationList = [];
+  final _degreeController = TextEditingController();
+  final _institutionController = TextEditingController();
+  final _yearController = TextEditingController();
+  final _descriptionController = TextEditingController();
+
+  void _onTextFieldChanged() {
+    _notifyParent();
+  }
 
   @override
   void initState() {
     super.initState();
+    // Add listeners to all text controllers
+    _degreeController.addListener(_onTextFieldChanged);
+    _institutionController.addListener(_onTextFieldChanged);
+    _yearController.addListener(_onTextFieldChanged);
+    _descriptionController.addListener(_onTextFieldChanged);
+
     if (widget.initialData != null) {
-      _educationEntries = List<Map<String, dynamic>>.from(widget.initialData!);
+      _educationList = List<Map<String, dynamic>>.from(widget.initialData!);
+      // If there's an unfinished entry, load it into the form
+      if (_educationList.isNotEmpty && _educationList.last['isUnfinished'] == true) {
+        final unfinished = _educationList.removeLast();
+        _degreeController.text = unfinished['degree'] ?? '';
+        _institutionController.text = unfinished['institution'] ?? '';
+        _yearController.text = unfinished['year'] ?? '';
+        _descriptionController.text = unfinished['description'] ?? '';
+      }
     }
   }
 
   void _notifyParent() {
-    widget.onDataChanged(_educationEntries);
+    List<Map<String, dynamic>> dataToSave = List.from(_educationList);
+    
+    // If there's data in any of the input fields, save it as an unfinished entry
+    if (_degreeController.text.isNotEmpty || 
+        _institutionController.text.isNotEmpty ||
+        _yearController.text.isNotEmpty ||
+        _descriptionController.text.isNotEmpty) {
+      dataToSave.add({
+        'degree': _degreeController.text,
+        'institution': _institutionController.text,
+        'year': _yearController.text,
+        'description': _descriptionController.text,
+        'isUnfinished': true,
+      });
+    }
+    
+    widget.onDataChanged(dataToSave);
   }
 
   void _addEducation() {
-    if (_educationTitleController.text.isNotEmpty && 
-        _educationInstitutionController.text.isNotEmpty) {
+    if (_degreeController.text.isNotEmpty && 
+        _institutionController.text.isNotEmpty) {
       setState(() {
-        _educationEntries.add({
-          'degree': _educationTitleController.text,
-          'institution': _educationInstitutionController.text,
-          'period': _educationPeriodController.text,
-          'description': _educationDescriptionController.text,
+        _educationList.add({
+          'degree': _degreeController.text,
+          'institution': _institutionController.text,
+          'year': _yearController.text,
+          'description': _descriptionController.text,
+          'isUnfinished': false,
         });
         
-        // Clear controllers for next entry
-        _educationTitleController.clear();
-        _educationInstitutionController.clear();
-        _educationPeriodController.clear();
-        _educationDescriptionController.clear();
+        // Clear controllers
+        _degreeController.clear();
+        _institutionController.clear();
+        _yearController.clear();
+        _descriptionController.clear();
         
         _notifyParent();
       });
@@ -59,19 +93,24 @@ class _EducationSectionState extends State<EducationSection> {
 
   void _removeEducation(int index) {
     setState(() {
-      _educationEntries.removeAt(index);
+      _educationList.removeAt(index);
       _notifyParent();
     });
   }
 
   @override
   void dispose() {
-    // Education
-    _educationTitleController.dispose();
-    _educationInstitutionController.dispose();
-    _educationPeriodController.dispose();
-    _educationDescriptionController.dispose();
-    
+    // Remove listeners from all text controllers
+    _degreeController.removeListener(_onTextFieldChanged);
+    _institutionController.removeListener(_onTextFieldChanged);
+    _yearController.removeListener(_onTextFieldChanged);
+    _descriptionController.removeListener(_onTextFieldChanged);
+
+    // Dispose all controllers
+    _degreeController.dispose();
+    _institutionController.dispose();
+    _yearController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -102,13 +141,13 @@ class _EducationSectionState extends State<EducationSection> {
           const SizedBox(height: 16),
           
           // List of existing education entries
-          if (_educationEntries.isNotEmpty) ...[          
+          if (_educationList.isNotEmpty) ...[          
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: _educationEntries.length,
+              itemCount: _educationList.length,
               itemBuilder: (context, index) {
-                final edu = _educationEntries[index];
+                final edu = _educationList[index];
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   color: Colors.white.withOpacity(0.1),
@@ -164,25 +203,25 @@ class _EducationSectionState extends State<EducationSection> {
           
           // Form for adding new education
           CustomTextField(
-            controller: _educationTitleController,
+            controller: _degreeController,
             hintText: 'Degree/Certificate',
             prefixIcon: Icons.workspace_premium_outlined,
           ),
           const SizedBox(height: 12),
           CustomTextField(
-            controller: _educationInstitutionController,
+            controller: _institutionController,
             hintText: 'School/University',
             prefixIcon: Icons.school_outlined,
           ),
           const SizedBox(height: 12),
           CustomTextField(
-            controller: _educationPeriodController,
+            controller: _yearController,
             hintText: 'Period (e.g., Sep 2018 - Jun 2022)',
             prefixIcon: Icons.date_range_outlined,
           ),
           const SizedBox(height: 12),
           CustomTextField(
-            controller: _educationDescriptionController,
+            controller: _descriptionController,
             hintText: 'Description (courses, achievements)',
             prefixIcon: Icons.description_outlined,
             maxLines: 3,

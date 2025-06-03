@@ -22,16 +22,41 @@ class _SkillsSectionState extends State<SkillsSection> {
   final _skillLevelController = TextEditingController(text: '3');
   int _skillLevel = 3; // Default skill level (1-5)
 
+  void _onTextFieldChanged() {
+    _notifyParent();
+  }
+
   @override
   void initState() {
     super.initState();
+    // Add listeners to text controllers
+    _skillNameController.addListener(_onTextFieldChanged);
+    _skillLevelController.addListener(_onTextFieldChanged);
+
     if (widget.initialData != null) {
       _skills = List<Map<String, dynamic>>.from(widget.initialData!);
+      // If there's an unfinished entry, load it into the form
+      if (_skills.isNotEmpty && _skills.last['isUnfinished'] == true) {
+        final unfinished = _skills.removeLast();
+        _skillNameController.text = unfinished['name'] ?? '';
+        _skillLevelController.text = unfinished['level'] ?? '';
+      }
     }
   }
 
   void _notifyParent() {
-    widget.onDataChanged(_skills);
+    List<Map<String, dynamic>> dataToSave = List.from(_skills);
+    
+    // If there's data in the name field, save it as an unfinished entry
+    if (_skillNameController.text.isNotEmpty) {
+      dataToSave.add({
+        'name': _skillNameController.text,
+        'level': _skillLevel,
+        'isUnfinished': true,
+      });
+    }
+    
+    widget.onDataChanged(dataToSave);
   }
 
   void _addSkill() {
@@ -40,8 +65,12 @@ class _SkillsSectionState extends State<SkillsSection> {
         _skills.add({
           'name': _skillNameController.text,
           'level': _skillLevel,
+          'isUnfinished': false,
         });
+        
+        // Clear name controller but keep skill level
         _skillNameController.clear();
+        // Reset skill level to default
         _skillLevel = 3;
         _skillLevelController.text = '3';
         
@@ -59,10 +88,13 @@ class _SkillsSectionState extends State<SkillsSection> {
 
   @override
   void dispose() {
-    // Skills
+    // Remove listeners
+    _skillNameController.removeListener(_onTextFieldChanged);
+    _skillLevelController.removeListener(_onTextFieldChanged);
+
+    // Dispose controllers
     _skillNameController.dispose();
     _skillLevelController.dispose();
-    
     super.dispose();
   }
 
@@ -122,13 +154,13 @@ class _SkillsSectionState extends State<SkillsSection> {
                             ),
                             const SizedBox(height: 4),
                             LinearProgressIndicator(
-                              value: skill['level'] / 5,
+                              value: (skill['level'] as int).toDouble() / 5,
                               backgroundColor: Colors.white.withOpacity(0.2),
                               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Level: ${skill['level']}/5',
+                              'Level: ${skill['level'] as int}/5',
                               style: TextStyle(color: Colors.white.withOpacity(0.8)),
                             ),
                           ],
