@@ -92,8 +92,8 @@ class _HobbiesSectionState extends State<HobbiesSection> {
                 return Chip(
                   label: Text(hobby),
                   backgroundColor: Colors.white.withOpacity(0.2),
-                  labelStyle: const TextStyle(color: Colors.white),
-                  deleteIcon: const Icon(Icons.close, size: 18, color: Colors.white70),
+                  labelStyle: const TextStyle(color: Colors.black),
+                  deleteIcon: const Icon(Icons.close, size: 18, color: Colors.red),
                   onDeleted: () => _removeHobby(index),
                 );
               }).toList(),

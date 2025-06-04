@@ -143,7 +143,7 @@ class _ProfileWizardState extends State<ProfileWizard> {
         children: [
           _buildStepLabel(0, 'Personal'),
           const SizedBox(width: 20),
-          _buildStepLabel(1, 'Work'),
+          _buildStepLabel(1, 'Work Experience'),
           const SizedBox(width: 20),
           _buildStepLabel(2, 'Education'),
           const SizedBox(width: 20),
