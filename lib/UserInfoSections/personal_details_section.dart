@@ -1,7 +1,6 @@
 import 'package:craftfolio/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
-import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 
@@ -51,16 +50,7 @@ class _PersonalDetailsSectionState extends State<PersonalDetailsSection> {
 
       // Profile image
       if (d['profileImageBytes'] != null) {
-        try {
-          if (d['profileImageBytes'] is Uint8List) {
-            _profileImageBytes = d['profileImageBytes'];
-          } else if (d['profileImageBytes'] is String) {
-            _profileImageBytes = base64Decode(d['profileImageBytes']);
-          }
-        } catch (e) {
-          print('Error setting profile image: $e');
-          _profileImageBytes = null;
-        }
+        _profileImageBytes = d['profileImageBytes'];
       }
     }
 
@@ -76,91 +66,38 @@ class _PersonalDetailsSectionState extends State<PersonalDetailsSection> {
   }
 
   void _notifyParent() {
-    print('Notifying parent of personal details changes');
-    
-    // Ensure current position is not empty
-    final currentPosition = _currentPositionController.text.trim();
-    
-    // Create the data map
-    final Map<String, dynamic> data = {
+    widget.onDataChanged({
       'fullName': _fullNameController.text,
-      'currentPosition': currentPosition.isNotEmpty ? currentPosition : 'No profession added',
+      'currentPosition': _currentPositionController.text,
       'street': _streetController.text,
       'address': _addressController.text,
       'country': _countryController.text,
       'phoneNumber': _phoneController.text,
       'email': _emailController.text,
       'bio': _bioController.text,
-    };
-    
-    // Add image data if available
-    if (_profileImageBytes != null) {
-      print('Adding image data to notification (${_profileImageBytes!.length} bytes)');
-      data['profileImageBytes'] = _profileImageBytes;
-    } else {
-      print('No image data to add to notification');
-    }
-    
-    print('Notifying with data keys: ${data.keys}');
-    widget.onDataChanged(data);
+      'profileImageBytes': _profileImageBytes,
+    });
   }
 
   Future<void> _pickProfileImage() async {
-    try {
-      final picker = ImagePicker();
-      final picked = await picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 800, // Limit image size
-        maxHeight: 800,
-        imageQuality: 85, // Compress quality
-      );
-      
+    final picker = ImagePicker();
+    if (kIsWeb) {
+      final picked = await picker.pickImage(source: ImageSource.gallery);
       if (picked != null) {
-        print('Image picked from gallery: ${picked.path}');
         final bytes = await picked.readAsBytes();
-        print('Image read successfully. Original byte length: ${bytes.length}');
-        
-        // Store image data
         setState(() {
-          _profileImageBytes = Uint8List.fromList(bytes); // Create a new copy
+          _profileImageBytes = bytes;
+          _notifyParent();
         });
-        
-        // Verify the image data
-        if (_profileImageBytes != null) {
-          print('Image stored in state. Byte length: ${_profileImageBytes!.length}');
-          
-          try {
-            // Test base64 conversion
-            final base64Test = base64Encode(_profileImageBytes!);
-            print('Test base64 conversion successful (${base64Test.length} chars)');
-            
-            // Ensure image can be displayed
-            await precacheImage(MemoryImage(_profileImageBytes!), context);
-            print('Image successfully cached for display');
-            
-            // Create a new notification with the image data
-            print('Preparing to notify parent with image data...');
-            _notifyParent();
-            
-          } catch (conversionError) {
-            print('Error in image conversion/caching: $conversionError');
-            throw Exception('Failed to process image data: $conversionError');
-          }
-        } else {
-          throw Exception('Failed to store image data in state');
-        }
-      } else {
-        print('No image picked from gallery');
       }
-    } catch (e) {
-      print('Error in image picking process: $e');
-      setState(() {
-        _profileImageBytes = null; // Clear invalid image data
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error processing image: $e')),
-        );
+    } else {
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked != null) {
+        final bytes = await picked.readAsBytes();
+        setState(() {
+          _profileImageBytes = bytes;
+          _notifyParent();
+        });
       }
     }
   }
@@ -229,10 +166,8 @@ class _PersonalDetailsSectionState extends State<PersonalDetailsSection> {
           const SizedBox(height: 12),
           CustomTextField(
             controller: _currentPositionController,
-            hintText: 'Current Position (e.g. Software Engineer)',
+            hintText: 'Current Position',
             prefixIcon: Icons.work_outline,
-            validator: (val) => val!.isEmpty ? 'Please enter your current position' : null,
-            onChanged: (val) => _notifyParent(),
           ),
           const SizedBox(height: 12),
           // About Me (Bio)

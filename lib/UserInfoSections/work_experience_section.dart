@@ -27,47 +27,13 @@ class _WorkExperienceSectionState extends State<WorkExperienceSection> {
   @override
   void initState() {
     super.initState();
-    // Add listeners to all text controllers
-    _experienceTitleController.addListener(_onTextFieldChanged);
-    _experienceLocationController.addListener(_onTextFieldChanged);
-    _experiencePeriodController.addListener(_onTextFieldChanged);
-    _experiencePlaceController.addListener(_onTextFieldChanged);
-    _experienceDescriptionController.addListener(_onTextFieldChanged);
-
     if (widget.initialData != null) {
       _workExperiences = List<Map<String, dynamic>>.from(widget.initialData!);
-      // If there's an unfinished entry, load it into the form
-      if (_workExperiences.isNotEmpty && _workExperiences.last['isUnfinished'] == true) {
-        final unfinished = _workExperiences.removeLast();
-        _experienceTitleController.text = unfinished['title'] ?? '';
-        _experiencePlaceController.text = unfinished['company'] ?? '';
-        _experienceLocationController.text = unfinished['location'] ?? '';
-        _experiencePeriodController.text = unfinished['period'] ?? '';
-        _experienceDescriptionController.text = unfinished['description'] ?? '';
-      }
     }
   }
 
   void _notifyParent() {
-    List<Map<String, dynamic>> dataToSave = List.from(_workExperiences);
-    
-    // If there's data in any of the input fields, save it as an unfinished entry
-    if (_experienceTitleController.text.isNotEmpty || 
-        _experiencePlaceController.text.isNotEmpty ||
-        _experienceLocationController.text.isNotEmpty ||
-        _experiencePeriodController.text.isNotEmpty ||
-        _experienceDescriptionController.text.isNotEmpty) {
-      dataToSave.add({
-        'title': _experienceTitleController.text,
-        'company': _experiencePlaceController.text,
-        'location': _experienceLocationController.text,
-        'period': _experiencePeriodController.text,
-        'description': _experienceDescriptionController.text,
-        'isUnfinished': true,
-      });
-    }
-    
-    widget.onDataChanged(dataToSave);
+    widget.onDataChanged(_workExperiences);
   }
 
   void _addWorkExperience() {
@@ -80,7 +46,6 @@ class _WorkExperienceSectionState extends State<WorkExperienceSection> {
           'location': _experienceLocationController.text,
           'period': _experiencePeriodController.text,
           'description': _experienceDescriptionController.text,
-          'isUnfinished': false,
         });
         
         // Clear controllers for next entry
@@ -102,20 +67,9 @@ class _WorkExperienceSectionState extends State<WorkExperienceSection> {
     });
   }
 
-  void _onTextFieldChanged() {
-    _notifyParent();
-  }
-
   @override
   void dispose() {
-    // Remove listeners
-    _experienceTitleController.removeListener(_onTextFieldChanged);
-    _experienceLocationController.removeListener(_onTextFieldChanged);
-    _experiencePeriodController.removeListener(_onTextFieldChanged);
-    _experiencePlaceController.removeListener(_onTextFieldChanged);
-    _experienceDescriptionController.removeListener(_onTextFieldChanged);
-
-    // Dispose controllers
+    // Work experience
     _experienceTitleController.dispose();
     _experienceLocationController.dispose();
     _experiencePeriodController.dispose();
