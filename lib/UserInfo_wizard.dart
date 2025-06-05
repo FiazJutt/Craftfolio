@@ -218,7 +218,6 @@ class _ProfileWizardState extends State<ProfileWizard> {
 
   // Build step indicator showing current progress
   Widget _buildStepIndicator() {
-    const totalSteps = 5; // Total number of steps
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
