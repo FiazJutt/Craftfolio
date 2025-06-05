@@ -34,13 +34,14 @@ class _ProfileWizardState extends State<ProfileWizard> {
     'hobbies': <String>[],
   };
 
+  // Updated initState method for ProfileWizard
   @override
   void initState() {
     super.initState();
     if (widget.initialData != null) {
       _profileData = Map<String, dynamic>.from(widget.initialData!);
 
-      // Ensure all required keys exist in the data
+      // Ensure all required keys exist
       _profileData['fullName'] ??= '';
       _profileData['currentPosition'] ??= '';
       _profileData['street'] ??= '';
@@ -53,8 +54,13 @@ class _ProfileWizardState extends State<ProfileWizard> {
       _profileData['experience'] ??= <Map<String, dynamic>>[];
       _profileData['educationDetails'] ??= <Map<String, dynamic>>[];
       _profileData['languages'] ??= <Map<String, dynamic>>[];
-      _profileData['hobbies'] ??= <String>[];
+
+      // IMPROVED: Handle hobbies with better cleaning
+      _profileData['hobbies'] = _cleanHobbiesList(_profileData['hobbies']);
     }
+
+    print('ProfileWizard initialized with hobbies: ${_profileData['hobbies']}');
+    print('Hobbies data type: ${_profileData['hobbies'].runtimeType}');
   }
 
   void _updatePersonalDetails(Map<String, dynamic> data) {
@@ -81,9 +87,62 @@ class _ProfileWizardState extends State<ProfileWizard> {
     });
   }
 
+
+  // Enhanced _cleanHobbiesList method for ProfileWizard
+  List<String> _cleanHobbiesList(dynamic hobbiesData) {
+    print('_cleanHobbiesList called with: $hobbiesData (type: ${hobbiesData.runtimeType})');
+
+    if (hobbiesData == null) {
+      print('Hobbies data is null, returning empty list');
+      return <String>[];
+    }
+
+    try {
+      if (hobbiesData is List<String>) {
+        final cleaned = hobbiesData.where((hobby) => hobby.trim().isNotEmpty).toList();
+        print('Cleaned List<String>: $cleaned');
+        return cleaned;
+      }
+      else if (hobbiesData is List) {
+        final converted = hobbiesData
+            .map((item) {
+          if (item == null) return '';
+          return item.toString().trim();
+        })
+            .where((hobby) => hobby.isNotEmpty)
+            .toList();
+        print('Converted List to List<String>: $converted');
+        return converted;
+      }
+      else if (hobbiesData is String && hobbiesData.trim().isNotEmpty) {
+        print('Converting single string to list: [${hobbiesData.trim()}]');
+        return [hobbiesData.trim()];
+      }
+      else {
+        print('Unexpected hobbies data type: ${hobbiesData.runtimeType}');
+        print('Data content: $hobbiesData');
+      }
+    } catch (e) {
+      print('Error cleaning hobbies data: $e');
+    }
+
+    print('Returning empty list as fallback');
+    return <String>[];
+  }
+
+// Also, make sure your Firebase data structure is correct
+// Check your Firebase Console to verify the hobbies are saved as:
+// UsersData/userInfos/[userId]/[infoId]/hobbies: ["hobby1", "hobby2"]
+// NOT as: hobbies: [{"name": "hobby1"}, {"name": "hobby2"}]
+
+
+  // Updated _updateHobbies method
   void _updateHobbies(List<String> data) {
+    final cleanedData = data.where((hobby) => hobby.trim().isNotEmpty).toList();
+    print('ProfileWizard updating hobbies with: $cleanedData');
     setState(() {
-      _profileData['hobbies'] = data;
+      _profileData['hobbies'] = cleanedData;
+      print('ProfileWizard updated hobbies: ${_profileData['hobbies']}');
     });
   }
 
@@ -101,31 +160,55 @@ class _ProfileWizardState extends State<ProfileWizard> {
     });
   }
 
+  // Updated _finish method with better error handling
   void _finish() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         _isSaving = true;
       });
-      
+
+      // Clean the profile data before saving
+      final cleanedProfileData = Map<String, dynamic>.from(_profileData);
+
+      // Ensure hobbies are cleaned
+      cleanedProfileData['hobbies'] = _cleanHobbiesList(cleanedProfileData['hobbies']);
+
+      print('Saving cleaned profile data - hobbies: ${cleanedProfileData['hobbies']}');
+      _profileData['hobbies'] = _cleanHobbiesList(_profileData['hobbies']);
+
       try {
-        // Check if we're editing an existing profile or creating a new one
         if (widget.initialData != null && widget.initialData!.containsKey('infoId')) {
           // Update existing profile
           final String infoId = widget.initialData!['infoId'];
-          await _firebaseService.updateUserInfo(infoId, _profileData);
+          await _firebaseService.updateUserInfo(infoId, cleanedProfileData);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile updated successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
         } else {
           // Save new profile
-          await _firebaseService.saveUserInfo(_profileData);
+          await _firebaseService.saveUserInfo(cleanedProfileData);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile created successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
         }
-        
+
         // Return to previous screen with updated data
-        Navigator.of(context).pop(_profileData);
+        Navigator.of(context).pop(cleanedProfileData);
       } catch (e) {
-        // Show error message
+        print('Error saving profile: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving profile: ${e.toString()}'))
+          SnackBar(
+            content: Text('Error saving profile: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
         );
-        
+      } finally {
         setState(() {
           _isSaving = false;
         });
@@ -247,15 +330,15 @@ class _ProfileWizardState extends State<ProfileWizard> {
                     else
                       ElevatedButton.icon(
                         onPressed: _isSaving ? null : _finish,
-                        icon: _isSaving 
+                        icon: _isSaving
                             ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A237E)),
-                                ),
-                              )
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A237E)),
+                          ),
+                        )
                             : const Icon(Icons.check),
                         label: Text(_isSaving ? 'Saving...' : 'Save Profile'),
                         style: ElevatedButton.styleFrom(
@@ -277,11 +360,10 @@ class _ProfileWizardState extends State<ProfileWizard> {
     );
   }
 
-  // Build the current step's content based on _step index
   // Helper method to safely convert dynamic lists to List<Map<String, dynamic>>
   List<Map<String, dynamic>> _safelyConvertToListOfMaps(dynamic data) {
     if (data == null) return [];
-    
+
     try {
       if (data is List) {
         return data.map((item) {
@@ -294,22 +376,7 @@ class _ProfileWizardState extends State<ProfileWizard> {
     } catch (e) {
       print('Error converting list data: $e');
     }
-    
-    return [];
-  }
-  
-  // Helper method to safely convert dynamic lists to List<String>
-  List<String> _safelyConvertToListOfStrings(dynamic data) {
-    if (data == null) return [];
-    
-    try {
-      if (data is List) {
-        return data.map((item) => item.toString()).toList();
-      }
-    } catch (e) {
-      print('Error converting list data: $e');
-    }
-    
+
     return [];
   }
 
@@ -345,9 +412,13 @@ class _ProfileWizardState extends State<ProfileWizard> {
           initialData: _safelyConvertToListOfMaps(_profileData['languages']),
           onDataChanged: _updateSkills,
         );
+
+    // Updated _buildCurrentStep method case 4
       case 4:
+        print('Building hobbies section with data: ${_profileData['hobbies']}');
+        final hobbiesData = _cleanHobbiesList(_profileData['hobbies']);
         return HobbiesSection(
-          initialData: _safelyConvertToListOfStrings(_profileData['hobbies']),
+          initialData: hobbiesData,
           onDataChanged: _updateHobbies,
         );
       default:
