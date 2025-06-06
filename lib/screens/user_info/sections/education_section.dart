@@ -1,4 +1,4 @@
-import 'package:craftfolio/custom_text_field.dart';
+import 'package:craftfolio/core/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
 class EducationSection extends StatefulWidget {
@@ -18,8 +18,10 @@ class EducationSection extends StatefulWidget {
 class _EducationSectionState extends State<EducationSection> {
   // Education - multiple entries
   List<Map<String, dynamic>> _educationEntries = [];
-  final _educationTitleController = TextEditingController(); // Degree/Certificate
-  final _educationInstitutionController = TextEditingController(); // Institution
+  final _educationTitleController =
+      TextEditingController(); // Degree/Certificate
+  final _educationInstitutionController =
+      TextEditingController(); // Institution
   final _educationPeriodController = TextEditingController();
   final _educationDescriptionController = TextEditingController();
 
@@ -36,7 +38,7 @@ class _EducationSectionState extends State<EducationSection> {
   }
 
   void _addEducation() {
-    if (_educationTitleController.text.isNotEmpty && 
+    if (_educationTitleController.text.isNotEmpty &&
         _educationInstitutionController.text.isNotEmpty) {
       setState(() {
         _educationEntries.add({
@@ -45,13 +47,13 @@ class _EducationSectionState extends State<EducationSection> {
           'period': _educationPeriodController.text,
           'description': _educationDescriptionController.text,
         });
-        
+
         // Clear controllers for next entry
         _educationTitleController.clear();
         _educationInstitutionController.clear();
         _educationPeriodController.clear();
         _educationDescriptionController.clear();
-        
+
         _notifyParent();
       });
     }
@@ -71,7 +73,7 @@ class _EducationSectionState extends State<EducationSection> {
     _educationInstitutionController.dispose();
     _educationPeriodController.dispose();
     _educationDescriptionController.dispose();
-    
+
     super.dispose();
   }
 
@@ -93,16 +95,17 @@ class _EducationSectionState extends State<EducationSection> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.add_circle, color: Colors.white, size: 28),
+                icon:
+                    const Icon(Icons.add_circle, color: Colors.white, size: 28),
                 onPressed: _addEducation,
                 tooltip: 'Add education',
               ),
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // List of existing education entries
-          if (_educationEntries.isNotEmpty) ...[          
+          if (_educationEntries.isNotEmpty) ...[
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -131,7 +134,8 @@ class _EducationSectionState extends State<EducationSection> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.white70, size: 20),
+                              icon: const Icon(Icons.delete,
+                                  color: Colors.white70, size: 20),
                               onPressed: () => _removeEducation(index),
                               tooltip: 'Remove',
                               padding: EdgeInsets.zero,
@@ -139,18 +143,22 @@ class _EducationSectionState extends State<EducationSection> {
                             ),
                           ],
                         ),
-                        if (edu['period'] != null && edu['period'].isNotEmpty) ...[                        
+                        if (edu['period'] != null &&
+                            edu['period'].isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Text(
                             edu['period'],
-                            style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                            style:
+                                TextStyle(color: Colors.white.withOpacity(0.8)),
                           ),
                         ],
-                        if (edu['description'] != null && edu['description'].isNotEmpty) ...[                        
+                        if (edu['description'] != null &&
+                            edu['description'].isNotEmpty) ...[
                           const SizedBox(height: 8),
                           Text(
                             edu['description'],
-                            style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                            style:
+                                TextStyle(color: Colors.white.withOpacity(0.7)),
                           ),
                         ],
                       ],
@@ -161,7 +169,7 @@ class _EducationSectionState extends State<EducationSection> {
             ),
             const Divider(color: Colors.white30),
           ],
-          
+
           // Form for adding new education
           CustomTextField(
             controller: _educationTitleController,

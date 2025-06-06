@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'UserInfoSections/index.dart';
-import 'services/firebase_service.dart';
+import 'sections/index.dart';
+import '../../core/services/firebase_service.dart';
 
 class ProfileWizard extends StatefulWidget {
   final Map<String, dynamic>? initialData;
@@ -87,10 +87,10 @@ class _ProfileWizardState extends State<ProfileWizard> {
     });
   }
 
-
   // Enhanced _cleanHobbiesList method for ProfileWizard
   List<String> _cleanHobbiesList(dynamic hobbiesData) {
-    print('_cleanHobbiesList called with: $hobbiesData (type: ${hobbiesData.runtimeType})');
+    print(
+        '_cleanHobbiesList called with: $hobbiesData (type: ${hobbiesData.runtimeType})');
 
     if (hobbiesData == null) {
       print('Hobbies data is null, returning empty list');
@@ -99,26 +99,24 @@ class _ProfileWizardState extends State<ProfileWizard> {
 
     try {
       if (hobbiesData is List<String>) {
-        final cleaned = hobbiesData.where((hobby) => hobby.trim().isNotEmpty).toList();
+        final cleaned =
+            hobbiesData.where((hobby) => hobby.trim().isNotEmpty).toList();
         print('Cleaned List<String>: $cleaned');
         return cleaned;
-      }
-      else if (hobbiesData is List) {
+      } else if (hobbiesData is List) {
         final converted = hobbiesData
             .map((item) {
-          if (item == null) return '';
-          return item.toString().trim();
-        })
+              if (item == null) return '';
+              return item.toString().trim();
+            })
             .where((hobby) => hobby.isNotEmpty)
             .toList();
         print('Converted List to List<String>: $converted');
         return converted;
-      }
-      else if (hobbiesData is String && hobbiesData.trim().isNotEmpty) {
+      } else if (hobbiesData is String && hobbiesData.trim().isNotEmpty) {
         print('Converting single string to list: [${hobbiesData.trim()}]');
         return [hobbiesData.trim()];
-      }
-      else {
+      } else {
         print('Unexpected hobbies data type: ${hobbiesData.runtimeType}');
         print('Data content: $hobbiesData');
       }
@@ -134,7 +132,6 @@ class _ProfileWizardState extends State<ProfileWizard> {
 // Check your Firebase Console to verify the hobbies are saved as:
 // UsersData/userInfos/[userId]/[infoId]/hobbies: ["hobby1", "hobby2"]
 // NOT as: hobbies: [{"name": "hobby1"}, {"name": "hobby2"}]
-
 
   // Updated _updateHobbies method
   void _updateHobbies(List<String> data) {
@@ -171,13 +168,16 @@ class _ProfileWizardState extends State<ProfileWizard> {
       final cleanedProfileData = Map<String, dynamic>.from(_profileData);
 
       // Ensure hobbies are cleaned
-      cleanedProfileData['hobbies'] = _cleanHobbiesList(cleanedProfileData['hobbies']);
+      cleanedProfileData['hobbies'] =
+          _cleanHobbiesList(cleanedProfileData['hobbies']);
 
-      print('Saving cleaned profile data - hobbies: ${cleanedProfileData['hobbies']}');
+      print(
+          'Saving cleaned profile data - hobbies: ${cleanedProfileData['hobbies']}');
       _profileData['hobbies'] = _cleanHobbiesList(_profileData['hobbies']);
 
       try {
-        if (widget.initialData != null && widget.initialData!.containsKey('infoId')) {
+        if (widget.initialData != null &&
+            widget.initialData!.containsKey('infoId')) {
           // Update existing profile
           final String infoId = widget.initialData!['infoId'];
           await _firebaseService.updateUserInfo(infoId, cleanedProfileData);
@@ -253,7 +253,8 @@ class _ProfileWizardState extends State<ProfileWizard> {
       appBar: AppBar(
         title: Text(
           widget.initialData != null ? 'Edit Profile' : 'Create Profile',
-          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          style:
+              const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         backgroundColor: const Color(0xFF1A237E),
         elevation: 0,
@@ -291,7 +292,8 @@ class _ProfileWizardState extends State<ProfileWizard> {
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.1),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(24)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -304,7 +306,8 @@ class _ProfileWizardState extends State<ProfileWizard> {
                         style: ElevatedButton.styleFrom(
                           foregroundColor: const Color(0xFF1A237E),
                           backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -320,7 +323,8 @@ class _ProfileWizardState extends State<ProfileWizard> {
                         style: ElevatedButton.styleFrom(
                           foregroundColor: const Color(0xFF1A237E),
                           backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -331,19 +335,21 @@ class _ProfileWizardState extends State<ProfileWizard> {
                         onPressed: _isSaving ? null : _finish,
                         icon: _isSaving
                             ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A237E)),
-                          ),
-                        )
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color(0xFF1A237E)),
+                                ),
+                              )
                             : const Icon(Icons.check),
                         label: Text(_isSaving ? 'Saving...' : 'Save Profile'),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: const Color(0xFF1A237E),
                           backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -403,7 +409,8 @@ class _ProfileWizardState extends State<ProfileWizard> {
         );
       case 2:
         return EducationSection(
-          initialData: _safelyConvertToListOfMaps(_profileData['educationDetails']),
+          initialData:
+              _safelyConvertToListOfMaps(_profileData['educationDetails']),
           onDataChanged: _updateEducation,
         );
       case 3:
@@ -412,7 +419,7 @@ class _ProfileWizardState extends State<ProfileWizard> {
           onDataChanged: _updateSkills,
         );
 
-    // Updated _buildCurrentStep method case 4
+      // Updated _buildCurrentStep method case 4
       case 4:
         print('Building hobbies section with data: ${_profileData['hobbies']}');
         final hobbiesData = _cleanHobbiesList(_profileData['hobbies']);

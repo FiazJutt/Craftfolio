@@ -1,10 +1,10 @@
-import 'package:craftfolio/downloadpage.dart';
-import 'package:craftfolio/UserInfoscreen.dart';
-import 'package:craftfolio/templatespage.dart';
+import 'package:craftfolio/screens/download/downloadpage.dart';
+import 'package:craftfolio/screens/user_info/UserInfoscreen.dart';
+import 'package:craftfolio/screens/templates/templatespage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'services/auth_service.dart';
-import 'loginpage.dart';
+import '../../core/services/auth_service.dart';
+import '../auth/loginpage.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -21,12 +21,9 @@ class _HomepageState extends State<Homepage> {
 
   // Placeholder pages for the other two tabs
   static const List<Widget> _widgetOptions = <Widget>[
-    // Current homepage content (will be extracted or replaced)
     TemplatesPage(),
-    DownloadPage(),
-    // Text('Search Page Content'),
+    // DownloadPage(),
     ProfilePage()
-
   ];
 
   @override
@@ -98,22 +95,21 @@ class _HomepageState extends State<Homepage> {
         ],
       ),
       body: Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    const Color(0xFF1A237E).withOpacity(0.9),
-                    const Color(0xFF0D47A1),
-                    const Color(0xFF1565C0).withOpacity(0.8),
-                  ],
-                ),
-              ),
-
-              child: _widgetOptions.elementAt(_selectedIndex),
-            ),
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              const Color(0xFF1A237E).withOpacity(0.9),
+              const Color(0xFF0D47A1),
+              const Color(0xFF1565C0).withOpacity(0.8),
+            ],
+          ),
+        ),
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -123,21 +119,20 @@ class _HomepageState extends State<Homepage> {
             icon: Icon(Icons.home),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.download),
-            label: 'Download',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.download),
+          //   label: 'Download',
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
         ],
 
-
         backgroundColor: const Color(0xFF323A8F),
         selectedItemColor: Colors.white, // Selected icon and label color
-        unselectedItemColor: Colors.white.withOpacity(0.7), // Unselected icon and label color
-
+        unselectedItemColor:
+            Colors.white.withOpacity(0.7), // Unselected icon and label color
       ),
     );
   }

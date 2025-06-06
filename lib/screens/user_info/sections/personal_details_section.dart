@@ -1,4 +1,4 @@
-import 'package:craftfolio/custom_text_field.dart';
+import 'package:craftfolio/core/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -144,13 +144,14 @@ class _PersonalDetailsSectionState extends State<PersonalDetailsSection> {
                   shape: BoxShape.circle,
                   image: _profileImageBytes != null
                       ? DecorationImage(
-                    image: MemoryImage(_profileImageBytes!),
-                    fit: BoxFit.cover,
-                  )
+                          image: MemoryImage(_profileImageBytes!),
+                          fit: BoxFit.cover,
+                        )
                       : null,
                 ),
                 child: _profileImageBytes == null
-                    ? const Icon(Icons.add_a_photo, color: Colors.white, size: 40)
+                    ? const Icon(Icons.add_a_photo,
+                        color: Colors.white, size: 40)
                     : null,
               ),
             ),

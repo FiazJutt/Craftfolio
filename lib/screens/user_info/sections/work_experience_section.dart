@@ -1,4 +1,4 @@
-import 'package:craftfolio/custom_text_field.dart';
+import 'package:craftfolio/core/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
 class WorkExperienceSection extends StatefulWidget {
@@ -37,7 +37,7 @@ class _WorkExperienceSectionState extends State<WorkExperienceSection> {
   }
 
   void _addWorkExperience() {
-    if (_experienceTitleController.text.isNotEmpty && 
+    if (_experienceTitleController.text.isNotEmpty &&
         _experiencePlaceController.text.isNotEmpty) {
       setState(() {
         _workExperiences.add({
@@ -47,14 +47,14 @@ class _WorkExperienceSectionState extends State<WorkExperienceSection> {
           'period': _experiencePeriodController.text,
           'description': _experienceDescriptionController.text,
         });
-        
+
         // Clear controllers for next entry
         _experienceTitleController.clear();
         _experiencePlaceController.clear();
         _experienceLocationController.clear();
         _experiencePeriodController.clear();
         _experienceDescriptionController.clear();
-        
+
         _notifyParent();
       });
     }
@@ -75,7 +75,7 @@ class _WorkExperienceSectionState extends State<WorkExperienceSection> {
     _experiencePeriodController.dispose();
     _experiencePlaceController.dispose();
     _experienceDescriptionController.dispose();
-    
+
     super.dispose();
   }
 
@@ -97,16 +97,17 @@ class _WorkExperienceSectionState extends State<WorkExperienceSection> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.add_circle, color: Colors.white, size: 28),
+                icon:
+                    const Icon(Icons.add_circle, color: Colors.white, size: 28),
                 onPressed: _addWorkExperience,
                 tooltip: 'Add work experience',
               ),
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // List of existing work experiences
-          if (_workExperiences.isNotEmpty) ...[          
+          if (_workExperiences.isNotEmpty) ...[
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -135,7 +136,8 @@ class _WorkExperienceSectionState extends State<WorkExperienceSection> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.white70, size: 20),
+                              icon: const Icon(Icons.delete,
+                                  color: Colors.white70, size: 20),
                               onPressed: () => _removeWorkExperience(index),
                               tooltip: 'Remove',
                               padding: EdgeInsets.zero,
@@ -143,25 +145,31 @@ class _WorkExperienceSectionState extends State<WorkExperienceSection> {
                             ),
                           ],
                         ),
-                        if (exp['location'] != null && exp['location'].isNotEmpty) ...[                        
+                        if (exp['location'] != null &&
+                            exp['location'].isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Text(
                             exp['location'],
-                            style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                            style:
+                                TextStyle(color: Colors.white.withOpacity(0.8)),
                           ),
                         ],
-                        if (exp['period'] != null && exp['period'].isNotEmpty) ...[                        
+                        if (exp['period'] != null &&
+                            exp['period'].isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Text(
                             exp['period'],
-                            style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                            style:
+                                TextStyle(color: Colors.white.withOpacity(0.8)),
                           ),
                         ],
-                        if (exp['description'] != null && exp['description'].isNotEmpty) ...[                        
+                        if (exp['description'] != null &&
+                            exp['description'].isNotEmpty) ...[
                           const SizedBox(height: 8),
                           Text(
                             exp['description'],
-                            style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                            style:
+                                TextStyle(color: Colors.white.withOpacity(0.7)),
                           ),
                         ],
                       ],
@@ -172,7 +180,7 @@ class _WorkExperienceSectionState extends State<WorkExperienceSection> {
             ),
             const Divider(color: Colors.white30),
           ],
-          
+
           // Form for adding new work experience
           CustomTextField(
             controller: _experienceTitleController,

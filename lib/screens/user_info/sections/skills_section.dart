@@ -1,4 +1,4 @@
-import 'package:craftfolio/custom_text_field.dart';
+import 'package:craftfolio/core/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
 class SkillsSection extends StatefulWidget {
@@ -44,7 +44,7 @@ class _SkillsSectionState extends State<SkillsSection> {
         _skillNameController.clear();
         _skillLevel = 3;
         _skillLevelController.text = '3';
-        
+
         _notifyParent();
       });
     }
@@ -62,7 +62,7 @@ class _SkillsSectionState extends State<SkillsSection> {
     // Skills
     _skillNameController.dispose();
     _skillLevelController.dispose();
-    
+
     super.dispose();
   }
 
@@ -84,16 +84,17 @@ class _SkillsSectionState extends State<SkillsSection> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.add_circle, color: Colors.white, size: 28),
+                icon:
+                    const Icon(Icons.add_circle, color: Colors.white, size: 28),
                 onPressed: _addSkill,
                 tooltip: 'Add skill',
               ),
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Display existing skills
-          if (_skills.isNotEmpty) ...[          
+          if (_skills.isNotEmpty) ...[
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -124,12 +125,14 @@ class _SkillsSectionState extends State<SkillsSection> {
                             LinearProgressIndicator(
                               value: skill['level'] / 5,
                               backgroundColor: Colors.white.withOpacity(0.2),
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Level: ${skill['level']}/5',
-                              style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8)),
                             ),
                           ],
                         ),
@@ -145,7 +148,7 @@ class _SkillsSectionState extends State<SkillsSection> {
             ),
             const SizedBox(height: 16),
           ],
-          
+
           // Add new skill
           CustomTextField(
             controller: _skillNameController,
@@ -174,7 +177,8 @@ class _SkillsSectionState extends State<SkillsSection> {
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),

@@ -1,6 +1,6 @@
-import 'package:craftfolio/UserInfo_wizard.dart';
+import 'package:craftfolio/screens/user_info/userinfo_wizard.dart';
 import 'package:flutter/material.dart';
-import 'services/firebase_service.dart';
+import '../../core/services/firebase_service.dart';
 
 class ProfilePage extends StatefulWidget {
   // Add constructor parameters if needed
@@ -46,8 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
       });
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading profiles: ${e.toString()}'))
-      );
+          SnackBar(content: Text('Error loading profiles: ${e.toString()}')));
     }
   }
 
@@ -108,8 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
         _loadProfiles(); // Refresh the list
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error deleting profile: ${e.toString()}'))
-        );
+            SnackBar(content: Text('Error deleting profile: ${e.toString()}')));
       }
     }
   }
@@ -157,7 +155,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SizedBox(height: 8),
                         Text(
                           'Tap the + button to create your first profile',
-                          style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                          style:
+                              TextStyle(color: Colors.white.withOpacity(0.8)),
                         ),
                       ],
                     ),
@@ -174,7 +173,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           return Card(
                             color: Colors.white.withOpacity(0.95),
                             margin: const EdgeInsets.only(bottom: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16)),
                             elevation: 4,
                             child: InkWell(
                               borderRadius: BorderRadius.circular(16),
@@ -186,23 +186,28 @@ class _ProfilePageState extends State<ProfilePage> {
                                     // Profile Image
                                     CircleAvatar(
                                       radius: 35,
-                                      backgroundColor: const Color(0xFF1A237E).withOpacity(0.1),
-                                      backgroundImage: profile['profileImageBytes'] != null
-                                          ? MemoryImage(profile['profileImageBytes'])
-                                          : null,
-                                      child: profile['profileImageBytes'] == null
-                                          ? const Icon(
-                                              Icons.person,
-                                              color: Color(0xFF1A237E),
-                                              size: 40,
-                                            )
-                                          : null,
+                                      backgroundColor: const Color(0xFF1A237E)
+                                          .withOpacity(0.1),
+                                      backgroundImage:
+                                          profile['profileImageBytes'] != null
+                                              ? MemoryImage(
+                                                  profile['profileImageBytes'])
+                                              : null,
+                                      child:
+                                          profile['profileImageBytes'] == null
+                                              ? const Icon(
+                                                  Icons.person,
+                                                  color: Color(0xFF1A237E),
+                                                  size: 40,
+                                                )
+                                              : null,
                                     ),
                                     const SizedBox(width: 16),
                                     // Profile Info
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             profile['fullName'] ?? 'Profile',
@@ -214,9 +219,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            profile['currentPosition'] ?? 'No profession added',
+                                            profile['currentPosition'] ??
+                                                'No profession added',
                                             style: TextStyle(
-                                              color: const Color(0xFF1A237E).withOpacity(0.7),
+                                              color: const Color(0xFF1A237E)
+                                                  .withOpacity(0.7),
                                               fontSize: 14,
                                             ),
                                           ),
@@ -230,7 +237,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                               ),
                                               const SizedBox(width: 4),
                                               Text(
-                                                profile['email'] ?? 'No email added',
+                                                profile['email'] ??
+                                                    'No email added',
                                                 style: TextStyle(
                                                   color: Colors.grey[600],
                                                   fontSize: 12,
@@ -251,7 +259,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                             Icons.edit,
                                             color: Color(0xFF1A237E),
                                           ),
-                                          onPressed: () => _editProfile(profile, index),
+                                          onPressed: () =>
+                                              _editProfile(profile, index),
                                         ),
                                         // Delete button
                                         IconButton(
@@ -259,7 +268,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                             Icons.delete,
                                             color: Colors.red,
                                           ),
-                                          onPressed: () => _deleteProfile(profile['infoId'], index),
+                                          onPressed: () => _deleteProfile(
+                                              profile['infoId'], index),
                                         ),
                                       ],
                                     ),

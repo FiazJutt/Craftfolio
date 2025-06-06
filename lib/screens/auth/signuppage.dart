@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'loginpage.dart';
-import 'services/auth_service.dart';
+import '../../core/services/auth_service.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -245,14 +245,14 @@ class _SignupPageState extends State<SignupPage> {
   Widget _buildLogo() {
     return Hero(
       tag: 'app_logo',
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          child: CircleAvatar(
-            radius: 62,
-            backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage("assets/CF_Logo.png"),
-          ),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: CircleAvatar(
+          radius: 62,
+          backgroundColor: Colors.transparent,
+          backgroundImage: AssetImage("assets/CF_Logo.png"),
         ),
+      ),
     );
   }
 

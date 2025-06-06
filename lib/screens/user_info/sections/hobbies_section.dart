@@ -1,4 +1,4 @@
-import 'package:craftfolio/custom_text_field.dart';
+import 'package:craftfolio/core/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
 class HobbiesSection extends StatefulWidget {
@@ -73,16 +73,17 @@ class _HobbiesSectionState extends State<HobbiesSection> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.add_circle, color: Colors.white, size: 28),
+                icon:
+                    const Icon(Icons.add_circle, color: Colors.white, size: 28),
                 onPressed: _addHobby,
                 tooltip: 'Add hobby',
               ),
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Display existing hobbies
-          if (_hobbies.isNotEmpty) ...[          
+          if (_hobbies.isNotEmpty) ...[
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -93,14 +94,15 @@ class _HobbiesSectionState extends State<HobbiesSection> {
                   label: Text(hobby),
                   backgroundColor: Colors.white.withOpacity(0.2),
                   labelStyle: const TextStyle(color: Colors.black),
-                  deleteIcon: const Icon(Icons.close, size: 18, color: Colors.red),
+                  deleteIcon:
+                      const Icon(Icons.close, size: 18, color: Colors.red),
                   onDeleted: () => _removeHobby(index),
                 );
               }).toList(),
             ),
             const SizedBox(height: 16),
           ],
-          
+
           // Add new hobby
           CustomTextField(
             controller: _hobbyController,
