@@ -265,10 +265,11 @@ packages:
   flutter_resume_template:
     dependency: "direct main"
     description:
-      name: flutter_resume_template
-      sha256: "857bb288b7ea8ca1e06f323fc2c367c18be2aa790aa69db356354a46f36fa4cb"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "1ce27cfd4485d27b08f55a5603a39c66e667e2dc"
+      url: "https://github.com/JordyHers-org/flutter_resume_template.git"
+    source: git
     version: "1.2.1"
   flutter_shake_animated:
     dependency: transitive
