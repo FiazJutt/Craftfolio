@@ -34,7 +34,7 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
     phoneNumber: "+1 737 4567890",
     email: "alex.carter@devmail.com",
     bio:
-        "Creative and detail-oriented Mobile App Developer with 6+ years of experience in designing, developing, and deploying cross-platform mobile applications using Flutter and native tools. Passionate about performance, clean architecture, and seamless user experiences.",
+    "Creative and detail-oriented Mobile App Developer with 6+ years of experience in designing, developing, and deploying cross-platform mobile applications using Flutter and native tools. Passionate about performance, clean architecture, and seamless user experiences.",
     profileImageBytes: null,
     workExperiences: [
       WorkExperience(
@@ -43,7 +43,7 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
         location: "Austin, TX",
         period: "2020 - Present",
         description:
-            "Developed and maintained multiple Flutter applications for e-commerce and social platforms. Integrated third-party APIs, improved UI/UX, and optimized performance for both Android and iOS platforms.",
+        "Developed and maintained multiple Flutter applications for e-commerce and social platforms. Integrated third-party APIs, improved UI/UX, and optimized performance for both Android and iOS platforms.",
       ),
       WorkExperience(
         title: "Junior Mobile Developer",
@@ -51,7 +51,7 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
         location: "Dallas, TX",
         period: "2017 - 2020",
         description:
-            "Worked on several Android native projects and transitioned into Flutter development. Collaborated with designers and backend developers to deliver responsive and scalable mobile solutions.",
+        "Worked on several Android native projects and transitioned into Flutter development. Collaborated with designers and backend developers to deliver responsive and scalable mobile solutions.",
       ),
     ],
     educationEntries: [
@@ -60,14 +60,14 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
         institution: "University of Texas at Austin",
         period: "2015 - 2017",
         description:
-            "Focused on mobile technologies, UI design patterns, and platform-specific performance optimization. Completed a thesis on cross-platform frameworks.",
+        "Focused on mobile technologies, UI design patterns, and platform-specific performance optimization. Completed a thesis on cross-platform frameworks.",
       ),
       EducationEntry(
         degree: "Bachelor of Science in Computer Science",
         institution: "Texas State University",
         period: "2011 - 2015",
         description:
-            "Studied core computer science concepts including algorithms, data structures, and software engineering. Participated in mobile app development club.",
+        "Studied core computer science concepts including algorithms, data structures, and software engineering. Participated in mobile app development club.",
       ),
     ],
     skills: [
@@ -87,42 +87,6 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
     ],
   );
 
-  // // Static preview info for initial preview
-  // static final UserResumeInfo staticPreviewInfo = UserResumeInfo(
-  //   fullName: "John Doe",
-  //   currentPosition: "Software Engineer",
-  //   street: "123 Main St",
-  //   address: "Springfield",
-  //   country: "USA",
-  //   phoneNumber: "+1 555 123456",
-  //   email: "john.doe@email.com",
-  //   bio: "A passionate developer with 5+ years of experience.",
-  //   profileImageBytes: null,
-  //   workExperiences: [
-  //     WorkExperience(
-  //       title: "Software Engineer",
-  //       company: "TechCorp",
-  //       location: "Springfield",
-  //       period: "2020 - Present",
-  //       description: "Building awesome apps.",
-  //     ),
-  //   ],
-  //   educationEntries: [
-  //     EducationEntry(
-  //       degree: "B.Sc. Computer Science",
-  //       institution: "Springfield University",
-  //       period: "2016 - 2020",
-  //       description: "Studied computer science.",
-  //     ),
-  //   ],
-  //   skills: [
-  //     SkillEntry(name: "Flutter", level: 4),
-  //     SkillEntry(name: "Dart", level: 4),
-  //     SkillEntry(name: "Firebase", level: 3),
-  //   ],
-  //   hobbies: ["Reading", "Traveling"],
-  // );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,62 +96,36 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton.icon(
-                  icon: const Icon(Icons.edit),
-                  label: Text(
-                      selectedProfile == null ? 'Select Info' : 'Edit Info'),
-                  onPressed: () async {
-                    await _showProfileSelectionDialog();
-                  }
-                  // },
-                  ),
-              const SizedBox(width: 16),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.save_alt),
-                label: const Text('Save & Download'),
-                onPressed: selectedProfile == null
-                    ? null
-                    : () async {
-                        // Generate PDF and save
-                        final pdf =
-                            widget.templateInfo.buildTemplate(selectedProfile!);
-                        await Printing.sharePdf(
-                          bytes: await pdf.save(),
-                          filename:
-                              '${widget.templateInfo.name.replaceAll(' ', '_').toLowerCase()}_${selectedProfile!.fullName.replaceAll(' ', '_')}_resume.pdf',
-                        );
-                        // TODO: Add logic to update DownloadsPage/list
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Resume saved/downloaded!')),
-                        );
-                      },
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
           // Always show preview, using static info if no profile selected
+          const SizedBox(height: 24),
           Expanded(
             child: PdfPreview(
               build: (format) async => widget.templateInfo
                   .buildTemplate(
-                    selectedProfile ?? staticPreviewInfo,
-                  )
+                selectedProfile ?? staticPreviewInfo,
+              )
                   .save(),
-              canChangePageFormat: true,
+              canChangePageFormat: false,
               canChangeOrientation: false,
               allowPrinting: true,
-              allowSharing: false,
+              allowSharing: true,
               canDebug: false,
               pdfFileName:
-                  '${widget.templateInfo.name.replaceAll(' ', '_').toLowerCase()}_${(selectedProfile ?? staticPreviewInfo).fullName.replaceAll(' ', '_')}_resume.pdf',
+              // '${widget.templateInfo.name.replaceAll(' ', '_').toLowerCase()}_${(selectedProfile ?? staticPreviewInfo).fullName.replaceAll(' ', '_')}_resume.pdf',
+              '${(selectedProfile ?? staticPreviewInfo).fullName.replaceAll(' ', '_')}_resume.pdf',
             ),
           ),
         ],
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 50.0), // adjust values as needed
+        child: FloatingActionButton.extended(
+          icon: const Icon(Icons.person_search),
+          label: Text(selectedProfile == null ? 'Select Info' : 'Edit Info'),
+          onPressed: () async {
+            await _showProfileSelectionDialog();
+          },
+        ),
       ),
     );
   }
@@ -200,7 +138,7 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
       builder: (BuildContext context) {
         return Dialog(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: FutureBuilder<List<Map<String, dynamic>>>(
             future: FirebaseService().getUserInfos(),
             builder: (context, snapshot) {
@@ -330,16 +268,16 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
                                         backgroundColor: const Color(0xFF1A237E)
                                             .withOpacity(0.1),
                                         backgroundImage:
-                                            profile.profileImageBytes != null
-                                                ? MemoryImage(
-                                                    profile.profileImageBytes!)
-                                                : null,
+                                        profile.profileImageBytes != null
+                                            ? MemoryImage(
+                                            profile.profileImageBytes!)
+                                            : null,
                                         child: profile.profileImageBytes == null
                                             ? const Icon(
-                                                Icons.person,
-                                                color: Color(0xFF1A237E),
-                                                size: 30,
-                                              )
+                                          Icons.person,
+                                          color: Color(0xFF1A237E),
+                                          size: 30,
+                                        )
                                             : null,
                                       ),
                                       const SizedBox(width: 16),
@@ -347,7 +285,7 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               profile.fullName.isNotEmpty
@@ -388,7 +326,7 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
                                                       color: Colors.grey[500],
                                                     ),
                                                     overflow:
-                                                        TextOverflow.ellipsis,
+                                                    TextOverflow.ellipsis,
                                                   ),
                                                 ),
                                               ],
@@ -470,28 +408,28 @@ class _TemplateDetailPageState extends State<TemplateDetailPage> {
       profileImageBytes: profileImageBytes,
       workExperiences: work
           .map<WorkExperience>((w) => WorkExperience(
-                title: w['title'] ?? '',
-                company: w['company'] ?? '',
-                location: w['location'] ?? '',
-                period: w['period'] ?? '',
-                description: w['description'] ?? '',
-              ))
+        title: w['title'] ?? '',
+        company: w['company'] ?? '',
+        location: w['location'] ?? '',
+        period: w['period'] ?? '',
+        description: w['description'] ?? '',
+      ))
           .toList(),
       educationEntries: education
           .map<EducationEntry>((edu) => EducationEntry(
-                degree: edu['degree'] ?? '',
-                institution: edu['institution'] ?? '',
-                period: edu['period'] ?? '',
-                description: edu['description'] ?? '',
-              ))
+        degree: edu['degree'] ?? '',
+        institution: edu['institution'] ?? '',
+        period: edu['period'] ?? '',
+        description: edu['description'] ?? '',
+      ))
           .toList(),
       skills: skills
           .map<SkillEntry>((s) => SkillEntry(
-                name: s['name'] ?? (s['language'] ?? ''),
-                level: (s['level'] is int)
-                    ? s['level']
-                    : int.tryParse(s['level']?.toString() ?? '3') ?? 3,
-              ))
+        name: s['name'] ?? (s['language'] ?? ''),
+        level: (s['level'] is int)
+            ? s['level']
+            : int.tryParse(s['level']?.toString() ?? '3') ?? 3,
+      ))
           .toList(),
       hobbies: hobbies,
     );

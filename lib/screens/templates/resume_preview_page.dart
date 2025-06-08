@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:craftfolio/screens/templates/templatespage.dart';
 import 'package:craftfolio/models/user_resume_info.dart';
 import 'package:printing/printing.dart';
@@ -84,7 +83,7 @@ class ResumePreviewPage extends StatelessWidget {
         allowPrinting: true,
         allowSharing: true,
         pdfFileName:
-            "${template.name.replaceAll(' ', '_').toLowerCase()}_resume.pdf",
+        "${template.name.replaceAll(' ', '_').toLowerCase()}_resume.pdf",
       ),
     );
   }
