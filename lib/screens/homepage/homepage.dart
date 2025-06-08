@@ -1,4 +1,3 @@
-import 'package:craftfolio/screens/download/downloadpage.dart';
 import 'package:craftfolio/screens/user_info/UserInfoscreen.dart';
 import 'package:craftfolio/screens/templates/templatespage.dart';
 import 'package:flutter/material.dart';
