@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'signuppage.dart';
 import '../../core/services/auth_service.dart';
@@ -143,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _handleLogin,
+              onPressed: _handleUserSignIn,
               style: ElevatedButton.styleFrom(
                 foregroundColor: const Color(0xFF1A237E),
                 backgroundColor: Colors.white,
@@ -197,33 +198,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            RichText(
-              textAlign: TextAlign.center,
-              text: const TextSpan(
-                style: TextStyle(color: Colors.white70, fontSize: 11),
-                children: [
-                  TextSpan(text: "By continuing you agree to our "),
-                  TextSpan(
-                    text: "Terms",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  TextSpan(text: " and "),
-                  TextSpan(
-                    text: "Privacy Policy",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -255,7 +229,16 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> _handleLogin() async {
+
+  /// Function to handle user sign-in
+  Future<void> _handleUserSignIn() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please fill in all fields")),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -266,21 +249,16 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text.trim(),
       );
 
-      // Navigate to home page after successful login
       if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const Homepage()),
-          (route) => false,
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Homepage()),
+              (route) => false,
         );
       }
-    } on Exception catch (e) {
-      // Show error message
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
-        );
-      }
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "An error occurred")),
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -290,7 +268,15 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  /// Function to handle forgot password
   Future<void> _handleForgotPassword() async {
+    if (_emailController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter your email address")),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -301,16 +287,13 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content:
-                  Text('Password reset email sent. Please check your inbox.')),
+              content: Text('Password reset email sent. Please check your inbox.')),
         );
       }
-    } on Exception catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
-        );
-      }
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "An error occurred")),
+      );
     } finally {
       if (mounted) {
         setState(() {

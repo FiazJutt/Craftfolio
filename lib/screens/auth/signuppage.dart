@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'loginpage.dart';
 import '../../core/services/auth_service.dart';
@@ -153,7 +154,7 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: _handleSignUp,
+              onPressed: _handleUserSignUp,
               style: ElevatedButton.styleFrom(
                 foregroundColor: const Color(0xFF1A237E),
                 backgroundColor: Colors.white,
@@ -209,33 +210,6 @@ class _SignupPageState extends State<SignupPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            RichText(
-              textAlign: TextAlign.center,
-              text: const TextSpan(
-                style: TextStyle(color: Colors.white70, fontSize: 11),
-                children: [
-                  TextSpan(text: "By signing up you agree to our "),
-                  TextSpan(
-                    text: "Terms",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  TextSpan(text: " and "),
-                  TextSpan(
-                    text: "Privacy Policy",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -267,7 +241,53 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  Future<void> _handleSignUp() async {
+  Future<void> _handleUserSignUp() async {
+    if (_emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _nameController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill in all fields")),
+      );
+      return;
+    } else if (_passwordController.text.trim() !=
+        _confirmPasswordController.text.trim()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Passwords do not match")),
+      );
+      return;
+    } else if (_passwordController.text.trim().length < 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("Password must contain at least 8 characters")),
+      );
+      return;
+    }else if (!_passwordController.text.trim().contains(RegExp(r'[A-Z]'))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("Password must contain a uppercase character.")),
+      );
+      return;
+    }else if (!_passwordController.text.trim().contains(RegExp(r'[a-z]'))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("Password must contain a lowercase character.")),
+      );
+      return;
+    }else if (!_passwordController.text.trim().contains(RegExp(r'\d'))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("Password must contain a number.")),
+      );
+      return;
+    }else if (!_passwordController.text.trim().contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("Password must contain a special character.")),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -279,7 +299,6 @@ class _SignupPageState extends State<SignupPage> {
         name: _nameController.text.trim(),
       );
 
-      // Navigate to login page after successful signup
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -290,14 +309,11 @@ class _SignupPageState extends State<SignupPage> {
           MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       }
-    } on Exception catch (e) {
-      // Show error message
-      print('Error during signup: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
-        );
-      }
+
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "An error occurred")),
+      );
     } finally {
       if (mounted) {
         setState(() {
